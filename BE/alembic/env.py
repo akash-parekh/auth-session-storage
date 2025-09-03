@@ -7,7 +7,7 @@ from alembic import context
 from app.core.config import settings
 from app.db.base import Base
 # IMPORTANT: import models package so Alembic “sees” them when autogenerating
-# import app.models  # No Models yet
+from app.models import *  # No Models yet
 
 # ---------------------------------------------------------
 config = context.config
@@ -21,8 +21,8 @@ config.set_main_option(
     f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
 )
 
-# target_metadata = Base.metadata
-target_metadata = None # No Models yet
+target_metadata = Base.metadata
+# target_metadata = None # No Models yet
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
