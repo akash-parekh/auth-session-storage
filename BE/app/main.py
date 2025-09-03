@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+
 from app.db.session import SessionLocal
+from app.core.redis import redis_client
 
 app = FastAPI()
 
@@ -16,3 +18,12 @@ def get_db():
 def db_health(db: Session = Depends(get_db)):
     db.execute(text("SELECT 1"))  # raises if connection fails
     return {"status": "ok"}
+
+@app.get("/health/redis")
+def redis_health():
+    try:
+        redis_client.set("health_check", "ok", ex=5)
+        value = redis_client.get("health_check")
+        return {"status": value}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
