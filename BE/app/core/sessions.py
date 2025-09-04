@@ -8,6 +8,7 @@ SESSION_EXPIRE_SECONDS = 60
 
 def create_session(user_id: str) -> str:
     session_id = str(uuid.uuid4())
+    print(f"session_id : {session_id}, user_id : {user_id}")
     redis_client.set(session_id, user_id, ex=SESSION_EXPIRE_SECONDS)
     return session_id
 
