@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy.orm import Session
 from typing import cast
 
@@ -56,3 +56,9 @@ def login(user_in: UserCreate, response: Response, db: Session = Depends(get_db)
     )
 
     return {"message": "Login successful"}
+
+@router.get("/me")
+def get_me(request: Request):
+    if not hasattr(request.state, "user"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {"id": request.state.user.id, "email": request.state.user.email}

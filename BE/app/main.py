@@ -5,8 +5,10 @@ from sqlalchemy import text
 from app.db.session import SessionLocal
 from app.core.redis import redis_client
 from app.api.routes import auth
+from app.middleware.session_middleware import SessionMiddleware
 
 app = FastAPI()
+app.add_middleware(SessionMiddleware)
 
 app.include_router(auth.router, prefix='/auth', tags=['auth'])
 
