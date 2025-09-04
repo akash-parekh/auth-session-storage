@@ -6,7 +6,7 @@ from app.db.session import SessionLocal
 from app.models.user import User
 from app.schemas.user import UserCreate
 from app.core.security import hash_password, verify_password
-from app.core.sessions import create_session
+from app.core.sessions import create_session, delete_session
 
 router = APIRouter()
 
@@ -62,3 +62,14 @@ def get_me(request: Request):
     if not hasattr(request.state, "user"):
         raise HTTPException(status_code=401, detail="Not authenticated")
     return {"id": request.state.user.id, "email": request.state.user.email}
+
+@router.post("/logout")
+def logout(response: Response, request: Request):
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=401, detail="No active session")
+
+    # Delete session from Redis
+    delete_session(session_id)
+    response.delete_cookie("session_id")
+    return {"message": "Logged out successfully"}
