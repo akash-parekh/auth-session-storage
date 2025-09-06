@@ -31,6 +31,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
     };
 
+    const register = async (email: string, password: string) => {
+        await axios.post(
+            "/auth/register",
+            { email, password },
+            { withCredentials: true },
+        );
+
+        await checkAuth();
+    };
+
     useEffect(() => {
         checkAuth();
     }, []);
@@ -42,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 isAuthenticated: !!user,
                 loading,
                 login,
+                register,
                 logout,
             }}
         >
